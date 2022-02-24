@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.core.dao.BookDao">
+    <!--SQL片段  -->
+    <sql id="selectBookListWhere">
+        <where>
+	       <if test="Q_id != null" >
+	           Q_id = #{Q_id}
+	       </if>
+	      
+        </where>
+    </sql>
+	<!-- 查询员工列表  -->
+	<select id="selectBookList" parameterType="book" 
+                                           resultType="book">
+		SELECT Q_id,
+		R_id,
+		B_take,
+		B_time,
+		B_create
+		
+		FROM b_book
+		<include refid="selectBookListWhere"/>
+		<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+	</select>
+	
+	<!-- 查询员工总数 -->
+	<select id="selectBookListCount" parameterType="book" 
+                                                 resultType="Integer">
+		select count(*) FROM b_book
+		<include refid="selectBookListWhere"/>
+	</select>	
+
+	<!-- 添加员工 -->
+	<insert id="createBook" parameterType="book">
+	   insert into b_book
+	  		 (
+	   			Q_id,
+	    		R_id,
+	    		B_take,
+	    		B_time,
+	    		B_create
+	    		) values (
+	    		#{Q_id},
+	    		#{R_id}, 
+	    		#{B_take},
+	    		#{B_time},
+	    		#{B_create}
+	    		)
+	</insert>
+	
+	<!-- 根据id获取员工信息 -->
+	<select id="getBookById" parameterType="Integer" 
+	resultType="book">
+	    select * from b_book where Q_id = #{Q_id} and R_id=#{R_id}
+	</select>
+	
+	<!-- 更新员工 -->
+	<update id="updateBook" parameterType="book">
+	    update b_book
+	    <set>
+	        <if test="B_take!=null">
+	            B_take=#{B_take},
+	        </if>
+	       
+	        <if test="B_time!=null">
+	            B_time=#{B_time},
+	        </if>
+	         <if test="B_create!=null">
+	            B_create=#{B_create},
+	        </if>
+	    </set>
+	   where R_id = #{R_id} and Q_id=#{Q_id}
+	</update>
+	
+	<!-- 删除客户 -->
+	<delete id="deleteBook" parameterType="Integer">
+	    delete from b_book where Q_id = #{Q_id} and R_id=#{R_id}
+	</delete>
+
+</mapper>

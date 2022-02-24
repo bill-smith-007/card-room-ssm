@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.core.dao.UserDao" >
+<!--SQL片段  -->
+    <sql id="selectUserListWhere">
+        <where>
+	       <if test="Q_nickname != null" >
+	           Q_nickname like "%"#{Q_nickname}"%"
+	           
+	       </if>
+	       
+	       <if test="Q_root != null" >
+	        and Q_root = #{Q_root}
+	       </if>
+        </where>
+    </sql>
+    <!-- 查询用户 -->
+    <select id="findUser" parameterType="String" resultType="user">
+	    select *
+	    from q_user
+	    where Q_nickname = #{Q_nickname}
+	    and Q_pwd =#{Q_pwd}
+	    
+    </select>
+    <select id="selectUserList" parameterType="user" 
+                                           resultType="user">
+		SELECT
+			Q_id,
+			Q_nickname,
+			Q_pwd,
+			Q_root,
+			Q_introduce,
+			Q_phone,
+			Q_sex,
+			Q_data
+			FROM
+				q_user
+		<include refid="selectUserListWhere"/>
+		<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+	</select>
+	<!-- 查询客户总数 -->
+	<select id="selectUserListCount" parameterType="user" 
+                                                 resultType="Integer">
+		select count(*) from q_user
+		<include refid="selectUserListWhere"/>
+	</select>	
+	<!-- 添加客户 -->
+	<insert id="createUser" parameterType="user">
+	    	insert into q_user(
+	    		Q_nickname,
+	    		Q_pwd, 
+	    		Q_root, 
+	    		Q_introduce,
+	    		Q_phone,
+	    		Q_sex,
+	    		Q_data)
+	    		values(
+	    			#{Q_nickname},
+	    			#{Q_pwd}, 
+	    			#{Q_root}, 
+	    			#{Q_introduce},
+	    			#{Q_phone},
+	    			#{Q_sex},
+	    			#{Q_data}
+	    		)
+	</insert>
+	<!-- 更新客户 -->
+	<update id="updateUser" parameterType="user">
+	    update q_user
+	    <set>
+	        <if test="Q_nickname!=null">
+	            Q_nickname=#{Q_nickname},
+	        </if>
+	        <if test="Q_pwd">
+	            Q_pwd=#{Q_pwd},
+	        </if>
+	        <if test="Q_root!=null">
+	            Q_root=#{Q_root},
+	        </if>
+	        <if test="Q_introduce!=null">
+	            Q_introduce=#{Q_introduce},
+	        </if>
+	        <if test="Q_phone!=null">
+	            Q_phone=#{Q_phone},
+	        </if>
+	        <if test="Q_sex!=null">
+	           Q_sex=#{Q_sex},
+	        </if>
+	        <if test="Q_data!=null">
+	            Q_data=#{Q_data},
+	        </if>
+	        
+	    </set>
+	    where Q_id=#{Q_id}
+	</update>
+	<delete id="deleteUser" parameterType="Integer">
+	    delete from q_user where Q_id=#{Q_id}
+	</delete>
+	<select id="getUserById" parameterType="Integer" 
+	resultType="user">
+	    select * from q_user where Q_id=#{Q_id}
+	</select>
+</mapper>

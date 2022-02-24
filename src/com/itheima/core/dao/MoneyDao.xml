@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.core.dao.MoneyDao">
+    <!--SQL片段  -->
+    <sql id="selectMoneyListWhere">
+        <where>
+	       <if test="Q_id != null" >
+	           Q_id = #{Q_id}
+	       </if>
+	      <if test="M_state != null" >
+	           M_state = #{M_state}
+	       </if>
+        </where>
+    </sql>
+	<!-- 查询员工列表  -->
+	<select id="selectMoneyList" parameterType="money" 
+                                           resultType="money">
+		SELECT M_message,
+		Q_id,
+		M_count,
+		M_take,
+		M_state,
+		R_id,
+		M_time
+		
+		FROM money
+		<include refid="selectMoneyListWhere"/>
+		<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+	</select>
+	
+	<!-- 查询员工总数 -->
+	<select id="selectMoneyListCount" parameterType="money" 
+                                                 resultType="Integer">
+		select count(*) FROM money
+		<include refid="selectMoneyListWhere"/>
+	</select>	
+
+	<!-- 添加员工 -->
+	<insert id="createMoney" parameterType="money">
+	   insert into b_money
+	  		 (
+	   			Q_id,
+	    		R_id,
+	    		B_take,
+	    		B_time,
+	    		B_create
+	    		) values (
+	    		#{Q_id},
+	    		#{R_id}, 
+	    		#{B_take},
+	    		#{B_time},
+	    		#{B_create}
+	    		)
+	</insert>
+	
+	<!-- 根据id获取员工信息 -->
+	<select id="getMoneyById" parameterType="Integer" 
+	resultType="money">
+	    select * from money where M_message=#{M_message}
+	</select>
+	
+	<!-- 更新员工 -->
+	<update id="updateMoney" parameterType="money">
+	    update money
+	    <set>
+	        <if test="Q_id != null" >
+	           Q_id = #{Q_id},
+	       </if>
+	      <if test="M_count != null" >
+	           M_count = #{M_count},
+	       </if>
+	        <if test="M_take != null" >
+	           M_take = #{M_take},
+	       </if>
+	      <if test="M_state != null" >
+	           M_state = #{M_state},
+	       </if>
+	       <if test="R_id != null" >
+	           R_id = #{R_id},
+	       </if>
+	      <if test="M_time != null" >
+	           M_time = #{M_time}
+	       </if>
+	    </set>
+	  	where M_message=#{M_message}
+	</update>
+	
+	<!-- 删除客户 -->
+	<delete id="deleteMoney" parameterType="Integer">
+	    delete from money where M_message=#{M_message}
+	</delete>
+	<select id="getRoomPrice" parameterType="Integer" 
+                                                 resultType="Integer">
+		select R_price from r_room where R_id = #{R_id}
+		
+	</select>
+	<update id="orderMoney" parameterType="Integer">
+	    update money set M_state = 1 where M_message=#{M_message}
+	</update>	
+</mapper>

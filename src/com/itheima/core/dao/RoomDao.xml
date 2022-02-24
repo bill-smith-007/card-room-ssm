@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.core.dao.RoomDao">
+    <!--SQL片段  -->
+    <sql id="selectRoomListWhere">
+        <where>
+	       <if test="R_id != null" >
+	           R_id = #{R_id}
+	       </if>
+	       <if test="R_state != null" >
+	        and R_state = #{R_state}   
+	       </if>
+        </where>
+    </sql>
+	<!-- 查询员工列表  -->
+	<select id="selectRoomList" parameterType="room" 
+                                           resultType="room">
+		SELECT R_id,
+		R_class,
+		R_introduce,
+		R_price,
+		R_state,
+		R_data 
+		FROM r_room
+		<include refid="selectRoomListWhere"/>
+		<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+	</select>
+	
+	<!-- 查询员工总数 -->
+	<select id="selectRoomListCount" parameterType="room" 
+                                                 resultType="Integer">
+		select count(*) FROM r_room
+		<include refid="selectRoomListWhere"/>
+	</select>	
+
+	<!-- 添加员工 -->
+	<insert id="createRoom" parameterType="room">
+	   insert into r_room
+	  		 (
+	   			R_class,
+	    		R_introduce,
+	    		R_price,
+	    		R_state,
+	    		R_data
+	    		) values (
+	    		#{R_class},
+	    		#{R_introduce}, 
+	    		#{R_price},
+	    		#{R_state},
+	    		#{R_data}
+	    		)
+	</insert>
+	
+	<!-- 根据id获取员工信息 -->
+	<select id="getRoomById" parameterType="Integer" 
+	resultType="room">
+	    select * from r_room where R_id = #{R_id}
+	</select>
+	
+	<!-- 更新员工 -->
+	<update id="updateRoom" parameterType="room">
+	    update r_room
+	    <set>
+	        <if test="R_class!=null">
+	            R_class=#{R_class},
+	        </if>
+	        <if test="R_introduce!=null">
+	            R_introduce=#{R_introduce},
+	        </if>
+	        <if test="R_price!=null">
+	            R_price=#{R_price},
+	        </if>
+	        <if test="R_state!=null">
+	            R_state=#{R_state},
+	        </if>
+	        <if test="R_data!=null">
+	            R_data=#{R_data},
+	        </if>
+	        
+	    </set>
+	    where R_id=#{R_id}
+	</update>
+	
+	<!-- 删除客户 -->
+	<delete id="deleteRoom" parameterType="Integer">
+	    delete from r_room where R_id=#{R_id}
+	</delete>
+	<update id="changeRoomState" parameterType="Integer">
+	    update r_room set R_state = 1 where R_id=#{R_id}
+	</update>
+	<insert id="createbook" parameterType="book">
+	  insert into b_book
+	  (Q_id,
+	  R_id,
+	   B_take,
+	    B_time, 
+	    B_create
+	  ) values (
+	  #{Q_id},
+	  #{R_id},
+	   #{B_take},
+	    #{B_time}, 
+	    #{B_create}
+	  )
+	</insert>
+	<insert id="createmoney" parameterType="money">
+	  insert into money
+	  (Q_id, 
+	  M_count,
+	  M_state, 
+	  R_id,
+	   M_time
+	   ) values (
+	   #{Q_id}, 
+	  #{M_count},
+	  #{M_state}, 
+	  #{R_id},
+	   #{M_time}
+	   )
+	</insert>
+</mapper>
